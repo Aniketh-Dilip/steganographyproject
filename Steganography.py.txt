@@ -1,34 +1,34 @@
-d = {chr(i): i for i in range(255)}
-c = {i: chr(i) for i in range(255)}
+import os
 
-# Reading the image
-x = cv2.imread(r"D:\download.jpg")
-i, j, k = x.shape
-print(i, j, k)
+# Define dictionaries for encoding/decoding
+d = {chr(i): i for i in range(256)}  # Dictionary to map characters to their ASCII values
+c = {i: chr(i) for i in range(256)}  # Dictionary to map ASCII values to characters
 
 # Input security key and text to hide
 key = input("\nEnter key to edit (Security Key): ")
 text = input("\nEnter text to hide:")
 
+# Simulate a 2D list (image) with 3 channels (R, G, B)
+width, height = 10, 10  # Arbitrary dimensions for the example
+x = [[[0, 0, 0] for _ in range(width)] for _ in range(height)]  # Initialize with zeros
+
 # Initialize variables
 k1 = 0
-n, m, z = 0, 0, 0
+n, m, z = 0, 0, 0  # Initialize n, m, z
 l = len(text)
 
-# Encode text into the image
+# Encode text into the simulated image
 for i in range(l):
-    x[n, m, z] = d[text[i]] ^ d[key[k1]]
+    x[n][m][z] = d[text[i]] ^ d[key[k1]]  # XOR operation for encryption
     z = (z + 1) % 3
     if z == 0:
-        m = (m + 1) % j
+        m = (m + 1) % width
         if m == 0:
-            n = (n + 1) % i
+            n = (n + 1) % height
     k1 = (k1 + 1) % len(key)
 
-# Save the encrypted image
-cv2.imwrite("encrypted_img.jpg", x)
-os.startfile("encrypted_img.jpg")
-print("Data Hiding in Image completed successfully.")
+# Save the encrypted data (for demonstration, just print it)
+print("Encrypted data (simulated image):", x)
 
 # Initialize variables for decoding
 k1 = 0
@@ -41,15 +41,16 @@ if ch == 1:
     decrypt = ""
     if key == key1:
         for i in range(l):
-            decrypt += c[x[n, m, z] ^ d[key[k1]]]
+            decrypt += c[x[n][m][z] ^ d[key[k1]]]  # XOR operation for decryption
             z = (z + 1) % 3
             if z == 0:
-                m = (m + 1) % j
+                m = (m + 1) % width
                 if m == 0:
-                    n = (n + 1) % i
+                    n = (n + 1) % height
             k1 = (k1 + 1) % len(key)
         print("The Secret Message is:", decrypt)
     else:
-        print("Check your key!!!!")
+        print("Incorrect key! Unable to unhide the text.")
 else:
-    print("Don't Want To Unhide The Text, Ok Then Bye!!!!")
+    print("You chose not to unhide the text. Exiting...")
+
